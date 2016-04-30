@@ -4,20 +4,154 @@
         <meta charset="utf-8">
         <title>Supercluster Leaflet demo</title>
 
+        <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
+
+        <!-- Bootstrap -->
+        <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.css') }}" />
+        <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.js') }}"></script>
+        <script src="{{ url_for('static', filename='bootstrap/js/collapse.js') }}"></script>
+        <script src="{{ url_for('static', filename='bootstrap/js/transition.js') }}"></script>
+
+        <!-- Date time picker -->
+        <script src="{{ url_for('static', filename='bootstrap/js/moment.js') }}"></script>
+        <script src="{{ url_for('static', filename='bootstrap/js/bootstrap-datetimepicker.min.js') }}"></script>
+        <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap-datetimepicker.min.css') }}" />
+
         <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v1.0.0-beta.2/leaflet.css" />
         <script src="http://cdn.leafletjs.com/leaflet/v1.0.0-beta.2/leaflet.js"></script>
         <script src="http://leaflet.github.io/Leaflet.heat/dist/leaflet-heat.js"></script>
         <link rel="stylesheet" href="{{ url_for('static', filename='demo/cluster.css') }}" />
-
         <style>
             html, body, #map {
                 height: 100%;
                 margin: 0;
             }
+            #menu {
+                position: absolute;
+                right: 0;
+                top: 0;
+                z-index: 1000;
+                padding: 20px;
+                width: 400px;
+                background-color: rgba(250, 250, 250, 0.5);
+                -webkit-border-bottom-left-radius: 12px;
+                -moz-border-radius-bottomleft: 12px;
+                border-bottom-left-radius: 12px;
+            }
+            .menu-button {
+                width: 100%;
+                text-align: left;
+                padding-left: 1em;
+            }
+            .menu-item {
+                margin: 10px 0;
+            }
+            .manu-container {
+                padding: 0;
+                margin: 0;
+            }
         </style>
     </head>
     <body>
+
         <div id="map"></div>
         <script src="{{ url_for('static', filename='demo/index.js') }}"></script>
+
+        <div id="menu" class="container">
+
+            <div class="row manu-container">
+                <div class="col-lg-12">
+
+                    <div class="input-group menu-item">
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-default dropdown-toggle menu-button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="caret"></span> Country
+                            </button>
+                            <ul class="dropdown-menu pull-right">
+                                <li><a href="#">USA</a></li>
+                                <li><a href="#">Spain</a></li>
+                                <li><a href="#">Mexico</a></li>
+                            </ul>
+                        </div><!-- /btn-group -->
+                    </div><!-- /input-group -->
+
+                    <div class="input-group menu-item">
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-default dropdown-toggle menu-button"
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="caret"></span> Operator
+                            </button>
+                            <ul class="dropdown-menu pull-right">
+                                <li><a href="#">Geocell</a></li>
+                                <li><a href="#">Magti</a></li>
+                                <li><a href="#">Beeline</a></li>
+                            </ul>
+                        </div><!-- /btn-group -->
+                    </div><!-- /input-group -->
+
+                    <div class="input-group menu-item">
+                        <div class="input-group-btn">
+                            <div class='input-group date' id="from-date">
+                                <span class="input-group-addon">
+                                    <span class="glyphicon">From:</span>
+                                </span>
+                                <input type='text' class="form-control" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <div class="input-group menu-item">
+                        <div class="input-group-btn">
+                            <div class='input-group date' id="to-date">
+                                <span class="input-group-addon">
+                                    <span class="glyphicon">To:</span>
+                                </span>
+                                <input type='text' class="form-control" />
+                                <span class="input-group-addon">
+                                    <span class="glyphicon glyphicon-calendar"></span>
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="input-group menu-item">
+                        <div class="radio">
+                            <label><input type="radio" name="optradio">Heat Map</label>
+                            <label><input type="radio" name="optradio">Cluster</label>
+                        </div>
+                    </div>
+
+                    <div class="input-group menu-item">
+                        <div class="input-group-btn">
+                            <button type="button" class="btn btn-default">Filter</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div><!-- /row -->
+        </div>
+
+        <script type="text/javascript">
+            $(function () {
+                from_date = $('#from-date');
+                to_date = $('#to-date');
+                from_date.datetimepicker();
+                to_date.datetimepicker({
+                    useCurrent: false //Important! See issue #1075
+                });
+                from_date.on("dp.change", function (e) {
+                    $('#to-date').data("DateTimePicker").minDate(e.date);
+                });
+                to_date.on("dp.change", function (e) {
+                    $('#from-date').data("DateTimePicker").maxDate(e.date);
+                });
+            });
+        </script>
     </body>
 </html>
