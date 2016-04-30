@@ -1,6 +1,13 @@
+import os
+
+
 class DataSource:
+    DATA_SOURCE = None
+
     def __init__(self, entries=None):
         self.entries = entries
+        path = os.path.abspath('./GeoLab/Katana/model/file_source/data.csv') # ./GeoLab/Katana/model/
+        self.file = open(path)
 
     @staticmethod
     def get_instance():
@@ -34,7 +41,6 @@ class Entry:
         self.str_num = None
         self.num = None
         self.Provider = None
-        self.Country = None
         self.ID = None
         self.Region = None
         self.Ctype = None
@@ -45,7 +51,6 @@ class Entry:
         self.lon = None
         self.lat = None
         if x is None and line is not None:
-            self.fix_provider_country()
             self.build()
         else:
             self.lon = x
@@ -58,8 +63,6 @@ class Entry:
         j = 0
         while j < length:
             to_add = inQuotes[j]
-            if j == 3:
-                pass
             if j != length - 1:
                 q = self.get_quotes_num(to_add)
                 if to_add[0] == '"' and q % 2 != 0:
@@ -137,9 +140,3 @@ class Entry:
             "]" +
             "}" +
             "}")
-
-    def fix_provider_country(self):
-        prov_and_country = self.Provider
-        index = prov_and_country.rfind(",")
-        self.Country = prov_and_country[index + 1:].strip(" ")
-        self.Provider = prov_and_country[:index].strip(" ")

@@ -34,25 +34,13 @@ class Reducer:
             count = get_from_grid(grid, x, y)
             set_to_grid(grid, x, y, count + 1)
         grid = self._avg_for_each(grid, size)
-        counter = 0
-        for _, val in grid.items():
-            counter += val
-        print('avg: ', counter)
         average = self._get_grid_avg(grid)
         min_val = self._remove_trashold(grid, average)
-        counter = 0
-        for _, val in grid.items():
-            counter += val
-        print('trashold: ', counter)
         grid = self._scale(grid, min_val)
-        counter = 0
-        for _, val in grid.items():
-            counter += val
-        print('scale: ', counter)
         coordinate_list = self._generate_list(grid, translator)
         data_source.set_entries(coordinate_list)
         # print(coordinate_list)
-        print(len(coordinate_list))
+        # print(len(coordinate_list))
 
     def _avg_for_each(self, grid, size):
         new_grid = {}

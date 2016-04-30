@@ -1,10 +1,8 @@
 import flask
-from flask import Blueprint, render_template, url_for
-from flask.wrappers import Response
-
-from model.file_source.data_source import DataSource, Entry
+from flask import Blueprint, render_template
 
 from file_source.data_source import DataSource
+from file_source.data_source import Entry
 
 routing = Blueprint('route', __name__,
                     url_prefix='/routing')
