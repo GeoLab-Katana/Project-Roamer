@@ -1,16 +1,18 @@
+import math
+
 from file_source.data_source import DataSource, Entry
 from reducer.translator import Translator
 
-GEO_LU_X = 43.778536
-GEP_LU_Y = 40.173705
-GEO_RU_X = 43.154278
-GEO_RU_Y = 46.757617
-GEO_RD_X = 41.001847
-GEO_RD_Y = 46.603808
-GEO_LD_X = 41.126098
-GEO_LD_Y = 40.088915
-GRID_SIZE_X = 10000
-GRID_SIZE_Y = 10000
+GEO_LU_Y = 43.778536
+GEP_LU_X = 40.173705
+GEO_RU_Y = 43.154278
+GEO_RU_X = 46.757617
+GEO_RD_Y = 41.001847
+GEO_RD_X = 46.603808
+GEO_LD_Y = 41.126098
+GEO_LD_X = 40.088915
+GRID_SIZE_X = 40000
+GRID_SIZE_Y = 20000
 
 
 class Reducer:
@@ -31,11 +33,22 @@ class Reducer:
             x, y = translator.translate_to_grid((x, y))
             count = get_from_grid(grid, x, y)
             set_to_grid(grid, x, y, count + 1)
-
         grid = self._avg_for_each(grid, size)
+        counter = 0
+        for _, val in grid.items():
+            counter += val
+        print('avg: ', counter)
         average = self._get_grid_avg(grid)
         min_val = self._remove_trashold(grid, average)
+        counter = 0
+        for _, val in grid.items():
+            counter += val
+        print('trashold: ', counter)
         grid = self._scale(grid, min_val)
+        counter = 0
+        for _, val in grid.items():
+            counter += val
+        print('scale: ', counter)
         coordinate_list = self._generate_list(grid, translator)
         data_source.set_entries(coordinate_list)
         # print(coordinate_list)
@@ -43,19 +56,22 @@ class Reducer:
 
     def _avg_for_each(self, grid, size):
         new_grid = {}
-        for i in range(0, size[0]):
-            for j in range(0, size[1]):
-                old_val = get_from_grid(grid, i, j)
-                average = max(get_average(grid, (i, j)), old_val)
-                if average > 0:
-                    new_grid[(i, j)] = average
+        for key, val in grid.items():
+            for i in range(-1, 2):
+                for j in range(-1, 2):
+                    # old_val = get_from_grid(grid, i, j)
+                    x = key[0] + i
+                    y = key[1] + j
+                    average = get_average(grid, (x, y))
+                    if average > 0:
+                        new_grid[(x, y)] = average
         return new_grid
 
     def _get_grid_avg(self, grid):
         average = 0
         for _, val in grid.items():
-            average = (average + val) / 2
-        return average
+            average = max(average, val) # (average + val) / 2
+        return int(math.sqrt(average))
 
     def _remove_trashold(self, grid, average):
         _min = 100000000000

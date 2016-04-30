@@ -1,16 +1,15 @@
-
 class DataSource:
     DATA_SOURCE = None
+
     def __init__(self, entries=None):
-        self.entries  = entries
-        self.file = open('file_source/data.csv')
+        self.entries = entries
+        self.file = open('/home/misho/GeoLab/Katana/model/file_source/data.csv')
 
     @staticmethod
     def get_instance():
         if DataSource.DATA_SOURCE == None:
             DataSource.DATA_SOURCE = DataSource()
         return DataSource.DATA_SOURCE
-
 
     def read_from_file(self, n):
         self.file.readline()
@@ -52,7 +51,6 @@ class Entry:
         else:
             self.lon = x
             self.lat = y
-
 
     def build(self):
         inQuotes = self.line.split(',')
