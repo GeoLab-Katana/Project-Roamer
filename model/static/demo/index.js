@@ -1,8 +1,8 @@
 'use strict';
 
 /*global L */
-
-var map = L.map('map').setView([0, 0], 2);
+//start with GEOLAB
+var map = L.map('map').setView([41.7176762, 44.7826364], 16);
 
 L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
