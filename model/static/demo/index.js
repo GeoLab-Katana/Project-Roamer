@@ -73,12 +73,14 @@ function updateMarkers(data) {
         markers.clearLayers();
         markers.addData(data);
     } else {
+        var points = [];
         data.forEach(function (entry) {
-            var num = entry.properties.cluster ? Math.pow(entry.properties.point_count, 1 / 3) : 1;
+            var num = entry.properties.cluster ? entry.properties.point_count : 1;
             for (var i = 0; i < num; i++) {
                 var cord = entry.geometry.coordinates;
-                markers.addLatLng([cord[1], cord[0]]);
+                points.push([cord[1], cord[0]]);
             }
-        })
+        });
+        markers.setLatLngs(points);
     }
 }
