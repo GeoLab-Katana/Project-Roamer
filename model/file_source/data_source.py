@@ -1,30 +1,39 @@
+
 class DataSource:
+    DATA_SOURCE = None
     def __init__(self, entries=None):
-        self.entries = entries
+        self.entries  = entries
+        self.file = open('file_source/data.csv')
 
     @staticmethod
-    def read_from_file(data_file, n):
-        data_file.readline()
-        entries = []
+    def get_instance():
+        if DataSource.DATA_SOURCE == None:
+            DataSource.DATA_SOURCE = DataSource()
+        return DataSource.DATA_SOURCE
+
+
+    def read_from_file(self, n):
+        self.file.readline()
+        self.entries = []
         for i in range(n):
-            line = data_file.readline()
+            line = self.file.readline()
             if not line:
                 break
             line = line[:-1]
             entry = Entry(line)
-            entries.append(entry)
+            self.entries.append(entry)
 
-        return entries
+        return self.entries
 
-    def set_entries(self, entries):
-        self.entries = entries
+    def set_entries(self, ent):
+        self.entries = ent
 
     def get_entries(self):
         return self.entries
 
 
 class Entry:
-    def __init__(self, line):
+    def __init__(self, line, x=None, y=None):
         self.line = line
         self.str_num = None
         self.num = None
@@ -38,7 +47,12 @@ class Entry:
         self.Hour = None
         self.lon = None
         self.lat = None
-        self.build()
+        if x is None and line is not None:
+            self.build()
+        else:
+            self.lon = x
+            self.lat = y
+
 
     def build(self):
         inQuotes = self.line.split(',')

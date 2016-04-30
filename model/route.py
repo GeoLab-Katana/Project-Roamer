@@ -4,6 +4,8 @@ from flask.wrappers import Response
 
 from model.file_source.data_source import DataSource, Entry
 
+from file_source.data_source import DataSource
+
 routing = Blueprint('route', __name__,
                     url_prefix='/routing')
 
@@ -28,20 +30,18 @@ datarouting = Blueprint('data', __name__, url_prefix='/data')
 def json_data():
     try:
         def generate():
-            yield "{ \"type\":\"FeatureCollection\",\n" +"\"features\":["
-            sent = 0
-            to_send = 100000
-            step = 500
-            with open('file_source/data.csv') as f:
-                while sent < to_send:
-                    Jsons = []
-                    for entry in DataSource.read_from_file(f, step):
-                        Jsons.append(Entry.to_json(entry))
-                    sent += step
-                    join = ','.join(Jsons)
-                    comma = ']}' if sent + step > to_send else ','
-                    yield join+comma
-        return Response(generate(), mimetype='application/json')
+            result = "{ \"type\":\"FeatureCollection\",\n" +"\"features\":["
+            data_source = DataSource.get_instance()
+            # entryies = data_source.get_entries()
+            # while sent < to_send:
+            Jsons = []
+            for entry in data_source.get_entries():
+                Jsons.append(Entry.to_json(entry))
+            _join = ','.join(Jsons)
+            comma = ']}'# if sent + step > to_send else ','
+            result += _join + comma
+            return result
+        return generate()
 
     except EnvironmentError as e:
         print(e)
