@@ -1,6 +1,3 @@
-from functools import reduce
-
-
 class Handler:
     def __init__(self):
         pass
@@ -45,7 +42,8 @@ class Entry:
         while j < length:
             to_add = inQuotes[j]
             if j != length - 1:
-                if to_add[0] == '"' and not to_add[-1] == '"':
+                q = self.get_quotes_num(to_add)
+                if to_add[0] == '"' and q % 2 != 0:
                     j, to_add = self.inside_quotes(inQuotes, j, length, to_add)
 
             if to_add[0] == '"':
@@ -72,11 +70,22 @@ class Entry:
         self.lon = float(strings[10])
         self.lat = float(strings[11])
 
+    def get_quotes_num(self, to_add):
+        q = 0
+        for c in to_add:
+            if c == '"':
+                q += 1
+        return q
+
     @staticmethod
     def inside_quotes(inQuotes, j, length, toAdd):
+        num = 0
         for k in range(j + 1, length):
             s = inQuotes[k]
             j += 1
+            if s[0] == '"' and s[-1] == '"':
+                toAdd += s
+                continue
             if not s[0] == '"':
                 toAdd += ',' + s
                 if s[-1] == '"':
@@ -87,30 +96,24 @@ class Entry:
     def to_json(entry):
         return (
             "{" +
-            "\"type\":\"Feature\"," + 
-            "\"properties\":" + 
-                "{" + 
-                "\"scalerank\":10," + 
-                "\"name\":\"Niagara Falls\"," + 
-                "\"comment\":null," + 
-                "\"name_alt\":null," + 
-                "\"region\":\"North America\"," + 
-                "\"subregion\":null," + 
-                "\"featureclass\":\"waterfall\"" + 
-                "}," + 
-            "\"geometry\":" + 
-                "{" + 
-                "\"type\":\"Point\"," + 
-                "\"coordinates\":" + 
-                    "[" + 
-                        str(entry.lat) + "," +
-                        str(entry.lon) +
-                    "]" + 
-                "}" + 
+            "\"type\":\"Feature\"," +
+            "\"properties\":" +
+            "{" +
+            "\"scalerank\":10," +
+            "\"name\":\"Niagara Falls\"," +
+            "\"comment\":null," +
+            "\"name_alt\":null," +
+            "\"region\":\"North America\"," +
+            "\"subregion\":null," +
+            "\"featureclass\":\"waterfall\"" +
+            "}," +
+            "\"geometry\":" +
+            "{" +
+            "\"type\":\"Point\"," +
+            "\"coordinates\":" +
+            "[" +
+            str(entry.lon) + "," +
+            str(entry.lat) +
+            "]" +
+            "}" +
             "}")
-
-
-if __name__ == "__main__":
-    file = open('data.csv', 'r+')
-    for entry in Handler.read_from_file(file, 2):
-        print(Entry.to_json(entry))
