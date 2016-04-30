@@ -85,10 +85,29 @@ class Entry:
 
     @staticmethod
     def to_json(entry):
-        return "\n   {\n    \"type\":\"Feature\",\n   ""   \"properties\":\n      {\n        \"scalerank\":10,\n  ""      \"name\":\"Niagara Falls\",\n  ""     \"comment\":null,\n       \"name_alt\":null,\n      ""  \"region\":\"North America\",\n     ""   \"subregion\":null,\n         \"featureclass\":\n      ""  \"waterfall\"\n   },\n       \"geometry\":\n      {\n     ""    \"type\":\"Point\",\n       \"coordinates\":\n        " \
-               " [\n  " + str(entry.lat) + ",\n" + "  " + str(
-            entry.lon) + "      " \
-                         "  ]\n" + "      }\n" + "    }\n"
+        return (
+            "{" +
+            "\"type\":\"Feature\"," + 
+            "\"properties\":" + 
+                "{" + 
+                "\"scalerank\":10," + 
+                "\"name\":\"Niagara Falls\"," + 
+                "\"comment\":null," + 
+                "\"name_alt\":null," + 
+                "\"region\":\"North America\"," + 
+                "\"subregion\":null," + 
+                "\"featureclass\":\"waterfall\"" + 
+                "}," + 
+            "\"geometry\":" + 
+                "{" + 
+                "\"type\":\"Point\"," + 
+                "\"coordinates\":" + 
+                    "[" + 
+                        str(entry.lat) + "," +
+                        str(entry.lon) +
+                    "]" + 
+                "}" + 
+            "}")
 
 
 if __name__ == "__main__":
