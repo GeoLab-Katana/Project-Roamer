@@ -9,7 +9,8 @@ var now = Date.now();
 
 var index;
 
-getJSON('/data/json', function (geojson) {
+var updateUrl = '/data/json';
+var updateCallback = function (geojson) {
     console.log('loaded ' + geojson.length + ' points JSON in ' + ((Date.now() - now) / 1000) + 's');
 
     index = supercluster({
@@ -22,7 +23,9 @@ getJSON('/data/json', function (geojson) {
     console.log(index.getTile(0, 0, 0));
 
     postMessage({ready: true});
-});
+};
+
+getJSON(updateUrl, updateCallback);
 
 self.onmessage = function (e) {
     if (e.data) {

@@ -8,7 +8,10 @@ L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
-var markers = getMarkers(true/*document.getElementById('hitmap').is(':checked')*/);
+var isHeatMap = false
+var markers = getMarkers();
+
+console.log(map);
 
 var worker = new Worker('/static/demo/worker.js');
 var ready = false;
@@ -18,8 +21,7 @@ worker.onmessage = function (e) {
         ready = true;
         update();
     } else {
-        var heatmap = true;//document.getElementById('hitmap').is(':checked');
-        updateMarkers(heatmap, e.data);
+        updateMarkers(e.data);
     }
 };
 
@@ -49,7 +51,10 @@ function createClusterIcon(feature, latlng) {
     return L.marker(latlng, {icon: icon});
 }
 
-function getMarkers(isHeatMap) {
+function getMarkers() {
+    if (markers) {
+        map.removeLayer(markers);
+    }
     if (!isHeatMap) {
         return L.geoJson(null, {
             pointToLayer: createClusterIcon
@@ -63,7 +68,7 @@ function getMarkers(isHeatMap) {
     }).addTo(map);
 }
 
-function updateMarkers(isHeatMap, data) {
+function updateMarkers(data) {
     if (!isHeatMap) {
         markers.clearLayers();
         markers.addData(data);

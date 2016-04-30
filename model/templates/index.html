@@ -122,14 +122,14 @@
 
                     <div class="input-group menu-item">
                         <div class="radio">
-                            <label><input type="radio" name="optradio">Heat Map</label>
-                            <label><input type="radio" name="optradio">Cluster</label>
+                            <label><input type="radio" name="optradio" value="0" checked>Cluster</label>
+                            <label><input type="radio" name="optradio" value="1">Heat Map</label>
                         </div>
                     </div>
 
                     <div class="input-group menu-item">
                         <div class="input-group-btn">
-                            <button type="button" class="btn btn-default">Filter</button>
+                            <button type="button" class="btn btn-default" id="filterBtn">Filter</button>
                         </div>
                     </div>
 
@@ -151,6 +151,12 @@
                 to_date.on("dp.change", function (e) {
                     $('#from-date').data("DateTimePicker").maxDate(e.date);
                 });
+                $("input[name='optradio']").on('change', function () {
+                    isHeatMap = $('input[name="optradio"]:checked').val() == "1";
+                    markers = getMarkers();
+                    update();
+                });
+
             });
         </script>
     </body>
