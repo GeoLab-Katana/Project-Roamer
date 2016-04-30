@@ -1,6 +1,6 @@
-class Handler:
-    def __init__(self):
-        pass
+class DataSource:
+    def __init__(self, entries=None):
+        self.entries = entries
 
     @staticmethod
     def read_from_file(data_file, n):
@@ -15,6 +15,12 @@ class Handler:
             entries.append(entry)
 
         return entries
+
+    def set_entries(self, entries):
+        self.entries = entries
+
+    def get_entries(self):
+        return self.entries
 
 
 class Entry:
@@ -74,7 +80,8 @@ class Entry:
         self.lon = float(strings[10])
         self.lat = float(strings[11])
 
-    def get_quotes_num(self, to_add):
+    @staticmethod
+    def get_quotes_num(to_add):
         q = 0
         for c in to_add:
             if c == '"':
@@ -103,7 +110,7 @@ class Entry:
             "\"type\":\"Feature\"," +
             "\"properties\":" +
             "{" +
-            "\"scalerank\":10," +
+            "\"scalerank\":18," +
             "\"name\":\"Niagara Falls\"," +
             "\"comment\":null," +
             "\"name_alt\":null," +

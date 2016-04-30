@@ -8,9 +8,10 @@ L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
-var markers = L.geoJson(null, {
-    pointToLayer: createClusterIcon
-}).addTo(map);
+var isHeatMap = false
+var markers = getMarkers();
+
+console.log(map);
 
 var worker = new Worker('/static/demo/worker.js');
 var ready = false;
@@ -20,8 +21,7 @@ worker.onmessage = function (e) {
         ready = true;
         update();
     } else {
-        markers.clearLayers();
-        markers.addData(e.data);
+        updateMarkers(e.data);
     }
 };
 
@@ -42,11 +42,45 @@ function createClusterIcon(feature, latlng) {
     var count = feature.properties.point_count;
     var size =
         count < 100 ? 'small' :
-        count < 1000 ? 'medium' : 'large';
+            count < 1000 ? 'medium' : 'large';
     var icon = L.divIcon({
         html: '<div><span>' + feature.properties.point_count_abbreviated + '</span></div>',
         className: 'marker-cluster marker-cluster-' + size,
         iconSize: L.point(40, 40)
     });
     return L.marker(latlng, {icon: icon});
+}
+
+function getMarkers() {
+    if (markers) {
+        map.removeLayer(markers);
+    }
+    if (!isHeatMap) {
+        return L.geoJson(null, {
+            pointToLayer: createClusterIcon
+        }).addTo(map);
+    }
+    return L.heatLayer([], {
+        radius: 25,
+        blur: 20,
+        minZoom: 0,
+        maxZoom: 16
+    }).addTo(map);
+}
+
+function updateMarkers(data) {
+    if (!isHeatMap) {
+        markers.clearLayers();
+        markers.addData(data);
+    } else {
+        var points = [];
+        data.forEach(function (entry) {
+            var num = entry.properties.cluster ? entry.properties.point_count : 1;
+            for (var i = 0; i < num; i++) {
+                var cord = entry.geometry.coordinates;
+                points.push([cord[1], cord[0]]);
+            }
+        });
+        markers.setLatLngs(points);
+    }
 }

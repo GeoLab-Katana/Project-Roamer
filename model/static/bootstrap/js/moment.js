@@ -598,7 +598,7 @@
     // token:    'M'
     // padded:   ['MM', 2]
     // ordinal:  'Mo'
-    // callback: function () { this.month() + 1 }
+    // updateCallback: function () { this.month() + 1 }
     function addFormatToken (token, padded, ordinal, callback) {
         var func = callback;
         if (typeof callback === 'string') {

@@ -2,7 +2,7 @@ import flask
 from flask import Blueprint, render_template, url_for
 from flask.wrappers import Response
 
-from model.file_source.server import Handler, Entry
+from model.file_source.data_source import DataSource, Entry
 
 routing = Blueprint('route', __name__,
                     url_prefix='/routing')
@@ -31,11 +31,11 @@ def json_data():
             yield "{ \"type\":\"FeatureCollection\",\n" +"\"features\":["
             sent = 0
             to_send = 100000
-            step = 10000
-            with open('model/file_source/data.csv') as f:
+            step = 500
+            with open('file_source/data.csv') as f:
                 while sent < to_send:
                     Jsons = []
-                    for entry in Handler.read_from_file(f, step):
+                    for entry in DataSource.read_from_file(f, step):
                         Jsons.append(Entry.to_json(entry))
                     sent += step
                     join = ','.join(Jsons)

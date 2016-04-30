@@ -20,7 +20,7 @@
 
         <link rel="stylesheet" href="http://cdn.leafletjs.com/leaflet/v1.0.0-beta.2/leaflet.css" />
         <script src="http://cdn.leafletjs.com/leaflet/v1.0.0-beta.2/leaflet.js"></script>
-
+        <script src="http://leaflet.github.io/Leaflet.heat/dist/leaflet-heat.js"></script>
         <link rel="stylesheet" href="{{ url_for('static', filename='demo/cluster.css') }}" />
         <style>
             html, body, #map {
@@ -69,7 +69,7 @@
                                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="caret"></span> Country
                             </button>
-                            <ul class="dropdown-menu pull-right">
+                            <ul class="dropdown-menu pull-left">
                                 <li><a href="#">USA</a></li>
                                 <li><a href="#">Spain</a></li>
                                 <li><a href="#">Mexico</a></li>
@@ -83,7 +83,7 @@
                                     data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="caret"></span> Operator
                             </button>
-                            <ul class="dropdown-menu pull-right">
+                            <ul class="dropdown-menu pull-left">
                                 <li><a href="#">Geocell</a></li>
                                 <li><a href="#">Magti</a></li>
                                 <li><a href="#">Beeline</a></li>
@@ -122,14 +122,14 @@
 
                     <div class="input-group menu-item">
                         <div class="radio">
-                            <label><input type="radio" name="optradio">Heat Map</label>
-                            <label><input type="radio" name="optradio">Cluster</label>
+                            <label><input type="radio" name="optradio" value="0" checked>Cluster</label>
+                            <label><input type="radio" name="optradio" value="1">Heat Map</label>
                         </div>
                     </div>
 
                     <div class="input-group menu-item">
                         <div class="input-group-btn">
-                            <button type="button" class="btn btn-default">Filter</button>
+                            <button type="button" class="btn btn-default" id="filterBtn">Filter</button>
                         </div>
                     </div>
 
@@ -151,6 +151,12 @@
                 to_date.on("dp.change", function (e) {
                     $('#from-date').data("DateTimePicker").maxDate(e.date);
                 });
+                $("input[name='optradio']").on('change', function () {
+                    isHeatMap = $('input[name="optradio"]:checked').val() == "1";
+                    markers = getMarkers();
+                    update();
+                });
+
             });
         </script>
     </body>
