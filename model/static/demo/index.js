@@ -12,7 +12,7 @@ var markers = L.geoJson(null, {
     pointToLayer: createClusterIcon
 }).addTo(map);
 
-var worker = new Worker('/demo/worker.js');
+var worker = new Worker('/static/demo/worker.js');
 var ready = false;
 
 worker.onmessage = function (e) {

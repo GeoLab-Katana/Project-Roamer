@@ -9,7 +9,7 @@ var now = Date.now();
 
 var index;
 
-getJSON('http://localhost:8080/data', function (geojson) {
+getJSON('/data/json', function (geojson) {
     console.log('loaded ' + geojson.length + ' points JSON in ' + ((Date.now() - now) / 1000) + 's');
 
     index = supercluster({

@@ -1,5 +1,5 @@
 import flask
-from flask import Blueprint
+from flask import Blueprint, render_template, url_for
 
 routing = Blueprint('route', __name__,
                     url_prefix='/routing')
@@ -8,7 +8,14 @@ routing = Blueprint('route', __name__,
 @routing.route('/')
 def route_answer():
     _dict = {'HELLO': 'WORLD'}
+    for key, val in flask.request.args.items():
+        _dict[key] = val
     return flask.jsonify(**_dict)
+
+
+@routing.route('/test')
+def test():
+    return render_template('index.html')
 
 
 datarouting = Blueprint('data', __name__, url_prefix='/data')
