@@ -1,5 +1,5 @@
-from model.file_source.server import Entry
-from model.file_source.server import Handler
+from model.file_source.data_source import DataSource
+
 import sqlite3
 
 create_str = "CREATE TABLE Entries (" \
@@ -23,8 +23,9 @@ insert_str = "INSERT INTO Entries " \
              "VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')"
 
 with sqlite3.connect('model/database.db') as conn:
+    data_source = DataSource.get_instance()
     with open('model/file_source/data.csv') as f:
-        entries = Handler.read_from_file(f, 200000)
+        entries = data_source.read_from_file(f, 200000)
         for entry in entries:
             statement = insert_str.format(entry.Provider, entry.Country, entry.ID, entry.Region,
                                           entry.Ctype, entry.IMEI, entry.Date, entry.lat, entry.lon)

@@ -21,7 +21,7 @@ class Reducer:
 
     def reduce_data(self):
         data_source = DataSource.get_instance()
-        handler = data_source.read_from_file(100000)
+        handler = data_source.read_from_file(1000000)
         start_c = (GEO_LD_X, GEO_LD_Y)
         end_c = (GEO_RU_X, GEO_RU_Y)
         self.reduce_entries(start_c, end_c, handler, data_source)
@@ -77,6 +77,7 @@ class Reducer:
         return _min
 
     def _scale(self, grid, min_val):
+        _ls = []
         for key, val in grid.items():
             old_val = get_from_grid(grid, key[0], key[1])
             if old_val > min_val:
@@ -84,6 +85,10 @@ class Reducer:
                 # new_val = old_val - min_val * diff + 1
                 new_val = diff
                 set_to_grid(grid, key[0], key[1], new_val)
+            else:
+                _ls.append(to_str(key[0], key[1]))
+        for key in _ls:
+            del grid[key]
         return grid
 
     def _generate_list(self, grid, translator):
