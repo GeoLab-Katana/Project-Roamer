@@ -30,7 +30,8 @@ function update() {
     var bounds = map.getBounds();
     worker.postMessage({
         bbox: [bounds.getWest(), bounds.getSouth(), bounds.getEast(), bounds.getNorth()],
-        zoom: map.getZoom()
+        zoom: map.getZoom(),
+        heatmap: isHeatMap
     });
 }
 
@@ -61,7 +62,7 @@ function getMarkers() {
         }).addTo(map);
     }
     return L.heatLayer([], {
-        radius: 25,
+        radius: 15,
         blur: 20,
         minZoom: 0,
         maxZoom: 16

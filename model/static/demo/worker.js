@@ -29,7 +29,8 @@ getJSON(updateUrl, updateCallback);
 
 self.onmessage = function (e) {
     if (e.data) {
-        postMessage(index.getClusters(e.data.bbox, e.data.zoom));
+        var zoom = e.data.heatmap ? 16 : e.data.zoom;
+        postMessage(index.getClusters(e.data.bbox, zoom));
     }
 };
 
