@@ -125,6 +125,7 @@
             }
             .dropdown-menu {
                 width: 100%;
+                background-color: #EEEEEE;
             }
         </style>
     </head>
@@ -168,6 +169,7 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <input id="country-name-value" type="hidden" value="" />
                                         <ul id="country-list" class="dropdown-menu pull-left">
                                             <li class="default-country-element" hidden><a id="default-country" href="#">Country</a></li>
                                             <li class="default-country-element divider" hidden></li>
@@ -193,6 +195,7 @@
                                                 </div>
                                             </div>
                                         </div>
+                                        <input id="region-name-value" type="hidden" value="" />
                                         <ul id="region-list" class="dropdown-menu pull-left">
                                             <li class="default-region-element" hidden><a id="default-region" href="#">Region</a></li>
                                             <li class="default-region-element divider" hidden></li>
@@ -275,9 +278,9 @@
                 });
 
                 $("#country-list").find("li a").click(function(){
-                    name = $(this).html().toUpperCase();
+                    name = $(this).html();
                     def_country = $("#default-country").html().toUpperCase();
-                    if (name == def_country) {
+                    if (name.toUpperCase() == def_country) {
                         $(".default-country-element").hide();
                     } else {
                         $(".default-country-element").show();
@@ -288,7 +291,7 @@
                 $("#region-list").find("li a").click(function(){
                     name = $(this).text();
                     def_region = $("#default-region").html().toUpperCase();
-                    if (name == def_region) {
+                    if (name.toUpperCase() == def_region) {
                         $(".default-region-element").hide();
                     } else {
                         $(".default-region-element").show();
@@ -299,27 +302,29 @@
 
                 $("#filterBtn").on('click', function () {
 
-                    var country = $("#country-name").html();
-                    var region = $("#region-name").html();
-                    country  = country.replace(/\s+/g,' ').trim().toUpperCase();
-                    region  = region.replace(/\s+/g,' ').trim().toUpperCase();
+                    var country = getCountry();
+                    var region = getRegion();
+                    country = country.replace(/\s+/g,' ').trim();
+                    country_upper = country.toUpperCase();
+                    region = region.replace(/\s+/g,' ').trim();
+                    region_upper = region.toUpperCase();
                     var url = '?';
 
                     def_country = $("#default-country").html().toUpperCase();
-                    if (country != def_country)
+                    if (country_upper != def_country && country_upper != "")
                     {
                         url += 'country=' + country;
-
                     }
 
                     def_region = $("#default-region").html().toUpperCase();
-                    if (region != def_region)
+                    if (region_upper != def_region && region_upper != "")
                     {
                         if (url != '?'){
                             url += '&'
                         }
                         url += 'region=' + region;
                     }
+                    console.log(url);
                     updateFiltered(url)
 
                 });
@@ -345,10 +350,20 @@
 
             function changeCountry(name) {
                 $("#country-name").html(name);
+                $("#country-name-value").val(name);
             }
 
             function changeRegion(name) {
                 $("#region-name").html(name);
+                $("#region-name-value").val(name);
+            }
+
+            function getCountry() {
+                return $("#country-name-value").val();
+            }
+
+            function getRegion() {
+                return $("#region-name-value").val();
             }
 
         </script>
