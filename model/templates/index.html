@@ -52,7 +52,6 @@
                 -moz-border-radius-bottomleft: 12px;
                 border-bottom-left-radius: 12px;
                 padding: 12px 20px 20px 20px;
-                overflow: hidden;
             }
             .menu-container-column {
                 padding: 0;
@@ -134,12 +133,11 @@
         <div id="map"></div>
         <script src="{{ url_for('static', filename='demo/index.js') }}"></script>
 
-<<<<<<< HEAD
         <!-- Menu container -->
         <div id="menu-container" class="container">
             <div class="row">
                 <!-- Menu toggle button -->
-                <div class="col-md-1 menu-container-column" id="menu-toggle-column">
+                <div class="col-xs-1 menu-container-column" id="menu-toggle-column">
                     <a href="javascript:slideClick()" class="btn btn-info btn-raised"
                         id="menu-toggle-button">
                         <span id="toggle-icon" class="glyphicon glyphicon-chevron-right"></span>
@@ -150,7 +148,7 @@
                 </div> <!-- / Menu toggle button -->
 
                 <!-- Menu itself -->
-                <div id="menu-container-column" class="col-md-11 menu-container-column">
+                <div id="menu-container-column" class="col-xs-11 menu-container-column">
                     <div id="menu" class="well bs-component">
 
                         <div class="row manu-container">
@@ -161,18 +159,19 @@
                                     <div class="btn-group dropdown-group">
                                         <div class="container btn btn-default btn-raised dropdown-button" data-toggle="dropdown">
                                             <div class="row">
-                                                <div class="col-sm-1">
+                                                <div class="col-xs-1">
                                                     <span class="caret"></span>
                                                 </div>
-                                                <div class="col-sm-9">
+                                                <div class="col-xs-9">
                                                     <span id="country-name">Country</span>
                                                 </div>
                                             </div>
                                         </div>
                                         <input id="country-name-value" type="hidden" value="" />
+                                        <input id="country-default-name" type="hidden" value="Country" />
                                         <ul id="country-list" class="dropdown-menu pull-left">
-                                            <li class="default-country-element" hidden><a id="default-country" href="#">Country</a></li>
-                                            <li class="default-country-element divider" hidden></li>
+                                            <li class="all-countries-element" hidden><a id="all-countries" href="#">All</a></li>
+                                            <li class="all-countries-element divider" hidden></li>
                                             <li><a href="#">TURKEY</a></li>
                                             <li><a href="#">RUSSIA</a></li>
                                             <li><a href="#">ARMENIA</a></li>
@@ -187,18 +186,19 @@
                                     <div class="btn-group dropdown-group">
                                         <div id="region-button" class="btn btn-default btn-raised dropdown-button" data-toggle="dropdown">
                                             <div class="row">
-                                                <div class="col-sm-1">
+                                                <div class="col-xs-1">
                                                     <span class="caret"></span>
                                                 </div>
-                                                <div class="col-sm-9">
+                                                <div class="col-xs-9">
                                                     <span id="region-name">Region</span>
                                                 </div>
                                             </div>
                                         </div>
                                         <input id="region-name-value" type="hidden" value="" />
+                                        <input id="region-default-name" type="hidden" value="Region" />
                                         <ul id="region-list" class="dropdown-menu pull-left">
-                                            <li class="default-region-element" hidden><a id="default-region" href="#">Region</a></li>
-                                            <li class="default-region-element divider" hidden></li>
+                                            <li class="all-regions-element" hidden><a id="all-regions" href="#">All</a></li>
+                                            <li class="all-regions-element divider" hidden></li>
                                             <li><a href="#">Tbilisi</a></li>
                                             <li><a href="#">Adjara</a></li>
                                             <li><a href="#">Kvemo Kartli</a></li>
@@ -261,9 +261,13 @@
             $(function () {
                 from_date = $('#from-date');
                 to_date = $('#to-date');
-                from_date.datetimepicker();
+                date_format = 'D MMM YYYY'
+                from_date.datetimepicker({
+                    format: date_format
+                });
                 to_date.datetimepicker({
-                    useCurrent: false //Important! See issue #1075
+                    useCurrent: false, //Important! See issue #1075
+                    format: date_format
                 });
                 from_date.on("dp.change", function (e) {
                     $('#to-date').data("DateTimePicker").minDate(e.date);
@@ -279,22 +283,24 @@
 
                 $("#country-list").find("li a").click(function(){
                     name = $(this).html();
-                    def_country = $("#default-country").html().toUpperCase();
-                    if (name.toUpperCase() == def_country) {
-                        $(".default-country-element").hide();
+                    all_countries = $("#all-countries").html().toUpperCase();
+                    if (name.toUpperCase() == all_countries) {
+                        $(".all-countries-element").hide();
+                        name = $("#country-default-name").val();
                     } else {
-                        $(".default-country-element").show();
+                        $(".all-countries-element").show();
                     }
                     changeCountry(name);
                 });
 
                 $("#region-list").find("li a").click(function(){
                     name = $(this).text();
-                    def_region = $("#default-region").html().toUpperCase();
-                    if (name.toUpperCase() == def_region) {
-                        $(".default-region-element").hide();
+                    all_regions = $("#all-regions").html().toUpperCase();
+                    if (name.toUpperCase() == all_regions) {
+                        $(".all-regions-element").hide();
+                        name = $("#region-default-name").val();
                     } else {
-                        $(".default-region-element").show();
+                        $(".all-regions-element").show();
                     }
                     changeRegion(name);
                 });
@@ -310,14 +316,14 @@
                     region_upper = region.toUpperCase();
                     var url = '?';
 
-                    def_country = $("#default-country").html().toUpperCase();
-                    if (country_upper != def_country && country_upper != "")
+                    all_countries = $("#country-default-name").val().toUpperCase();
+                    if (country_upper != all_countries && country_upper != "")
                     {
                         url += 'country=' + country;
                     }
 
-                    def_region = $("#default-region").html().toUpperCase();
-                    if (region_upper != def_region && region_upper != "")
+                    all_regions = $("#region-default-name").val().toUpperCase();
+                    if (region_upper != all_regions && region_upper != "")
                     {
                         if (url != '?'){
                             url += '&'
@@ -326,7 +332,6 @@
                     }
                     console.log(url);
                     updateFiltered(url)
-
                 });
 
 
@@ -349,6 +354,7 @@
             }
 
             function changeCountry(name) {
+                all_name = $('')
                 $("#country-name").html(name);
                 $("#country-name-value").val(name);
             }
