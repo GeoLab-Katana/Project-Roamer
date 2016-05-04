@@ -2,13 +2,17 @@
 
 /*global L */
 //start with GEOLAB
-var map = L.map('map').setView([41.7176762, 44.7826364], 16);
+var map = L.map('map').setView([41.709829, 44.835205], 8);
+var southWest = L.latLng(43.596306, 39.924316),
+    northEast = L.latLng(41.029643, 46.713867),
+    bounds = L.latLngBounds(southWest, northEast);
+map.setMaxBounds(bounds);
 
 L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
-var isHeatMap = false
+var isHeatMap = false;
 var markers = getMarkers();
 
 console.log(map);
@@ -63,7 +67,7 @@ function getMarkers() {
     }
     return L.heatLayer([], {
         radius: 15,
-        blur: 20,
+        blur: 25,
         minZoom: 0,
         maxZoom: 16
     }).addTo(map);
@@ -82,6 +86,9 @@ function updateMarkers(data) {
                 points.push([cord[1], cord[0]]);
             }
         });
+        var radius = 7 + map.getZoom() * 1.3;
+        var blur = 17 + map.getZoom() * 1.3;
+        markers.setOptions({radius: radius, blur: blur});
         markers.setLatLngs(points);
     }
 }
