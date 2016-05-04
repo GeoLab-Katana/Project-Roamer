@@ -6,7 +6,7 @@ class DataSource:
 
     def __init__(self, entries=None):
         self.entries = entries
-        path = os.path.abspath('model/file_source/data.csv')
+        path = os.path.abspath('file_source/data.csv')
         self.file = open(path)
 
     @staticmethod

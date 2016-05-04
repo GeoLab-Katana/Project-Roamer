@@ -7,11 +7,21 @@
         <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 
+         <!-- Material Design fonts -->
+        <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/css?family=Roboto:300,400,500,700">
+        <link rel="stylesheet" type="text/css" href="//fonts.googleapis.com/icon?family=Material+Icons">
+
+        <!-- Bootstrap -->
+        <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
         <!-- Bootstrap -->
         <link rel="stylesheet" href="{{ url_for('static', filename='bootstrap/css/bootstrap.css') }}" />
         <script src="{{ url_for('static', filename='bootstrap/js/bootstrap.js') }}"></script>
         <script src="{{ url_for('static', filename='bootstrap/js/collapse.js') }}"></script>
         <script src="{{ url_for('static', filename='bootstrap/js/transition.js') }}"></script>
+
+        <!-- Bootstrap Material Design -->
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='material/css/bootstrap-material-design.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='material/css/ripples.min.css') }}">
 
         <!-- Date time picker -->
         <script src="{{ url_for('static', filename='bootstrap/js/moment.js') }}"></script>
@@ -26,30 +36,92 @@
             html, body, #map {
                 height: 100%;
                 margin: 0;
+                overflow: hidden;
             }
-            #menu {
+            #menu-container {
                 position: absolute;
                 right: 0;
                 top: 0;
                 z-index: 1000;
-                padding: 20px;
                 width: 400px;
-                background-color: rgba(250, 250, 250, 0.5);
+                padding: 0;
+            }
+            #menu {
+                background-color: rgba(236, 236, 236, 1);
                 -webkit-border-bottom-left-radius: 12px;
                 -moz-border-radius-bottomleft: 12px;
                 border-bottom-left-radius: 12px;
+                padding: 12px 20px 20px 20px;
+                overflow: hidden;
+            }
+            .menu-container-column {
+                padding: 0;
+            }
+            #menu-toggle-column {
+                height: 100%;
+            }
+            #menu-toggle-button {
+                padding-left: 0;
+                padding-right: 0;
+                margin-left: 0;
+                margin-right: 0;
+                width: 100%;
+                -webkit-border-top-right-radius: 0;
+                -webkit-border-bottom-right-radius: 0;
+                -moz-border-radius-topright: 0;
+                -moz-border-radius-bottomright: 0;
+                border-top-right-radius: 0;
+                border-bottom-right-radius: 0;
+                /*background-color: rgba(254, 87, 34, 0.7);*/
             }
             .menu-button {
-                width: 100%;
                 text-align: left;
                 padding-left: 1em;
             }
             .menu-item {
-                margin: 10px 0;
+                width: 100%;
             }
             .manu-container {
                 padding: 0;
                 margin: 0;
+            }
+            .menu-item, .date-chooser-name {
+                font-family: sans-serif;
+            }
+            .date-chooser-name {
+                width: 40px;
+            }
+            #menu-column {
+                padding: 0;
+            }
+            .dropdown-group {
+                width: 100%;
+            }
+            .dropdown-button {
+                width: 100%;
+                text-align: center;
+            }
+            #filter-button-div {
+                margin-top: 10px;
+                margin-bottom: 10px;
+            }
+            #heat-map-toggle {
+                -ms-transform: scale(1.3); /* IE 9 */
+                -webkit-transform: scale(1.3); /* Safari */
+                transform: scale(1.3);
+                margin-left: 20px;
+            }
+            #toggle-icon {
+                display: block;
+            }
+            #toggle-label {
+                writing-mode: tb-rl; padding-top: 10px;
+            }
+            .togglebutton label input[type=checkbox]:checked + .toggle:after {
+                background: #FAFAFA;
+            }
+            .togglebutton label input[type=checkbox]:checked + .toggle {
+                background-color: #FF6D00;
             }
         </style>
     </head>
@@ -58,84 +130,117 @@
         <div id="map"></div>
         <script src="{{ url_for('static', filename='demo/index.js') }}"></script>
 
-        <div id="menu" class="container">
+        <!-- Menu container -->
+        <div id="menu-container" class="container">
+            <div class="row">
+                <!-- Menu toggle button -->
+                <div class="col-md-1 menu-container-column" id="menu-toggle-column">
+                    <a href="javascript:slideClick()" class="btn btn-info btn-raised"
+                        id="menu-toggle-button">
+                        <span id="toggle-icon" class="glyphicon glyphicon-chevron-right"></span>
+                        <span id="toggle-label">
+                            Options
+                        </span>
+                    </a>
+                </div> <!-- / Menu toggle button -->
 
-            <div class="row manu-container">
-                <div class="col-lg-12">
+                <!-- Menu itself -->
+                <div id="menu-container-column" class="col-md-11 menu-container-column">
+                    <div id="menu" class="well bs-component">
 
-                    <div class="input-group menu-item">
-                        <div class="input-group-btn">
-                            <button type="button" class="btn btn-default dropdown-toggle menu-button"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="caret"></span> Country
-                            </button>
-                            <ul class="dropdown-menu pull-left">
-                                <li><a href="#">USA</a></li>
-                                <li><a href="#">Spain</a></li>
-                                <li><a href="#">Mexico</a></li>
-                            </ul>
-                        </div><!-- /btn-group -->
-                    </div><!-- /input-group -->
+                        <div class="row manu-container">
+                            <div class="col-lg-12" id="menu-column">
 
-                    <div class="input-group menu-item">
-                        <div class="input-group-btn">
-                            <button type="button" class="btn btn-default dropdown-toggle menu-button"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="caret"></span> Operator
-                            </button>
-                            <ul class="dropdown-menu pull-left">
-                                <li><a href="#">Geocell</a></li>
-                                <li><a href="#">Magti</a></li>
-                                <li><a href="#">Beeline</a></li>
-                            </ul>
-                        </div><!-- /btn-group -->
-                    </div><!-- /input-group -->
 
-                    <div class="input-group menu-item">
-                        <div class="input-group-btn">
-                            <div class='input-group date' id="from-date">
-                                <span class="input-group-addon">
-                                    <span class="glyphicon">From:</span>
-                                </span>
-                                <input type='text' class="form-control" />
-                                <span class="input-group-addon">
-                                    <span class="glyphicon glyphicon-calendar"></span>
-                                </span>
+                                <div class="input-group menu-item">
+                                    <div class="btn-group dropdown-group">
+                                        <div class="container btn btn-default btn-raised dropdown-button" data-toggle="dropdown">
+                                            <div class="row">
+                                                <div class="col-sm-1">
+                                                    <span class="caret"></span>
+                                                </div>
+                                                <div class="col-sm-10">
+                                                    <span>Country</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <ul class="dropdown-menu pull-left">
+                                            <li><a href="#">USA</a></li>
+                                            <li><a href="#">Mexico</a></li>
+                                            <li><a href="#">Spain</a></li>
+                                        </ul>
+                                    </div>
+                                </div><!-- /input-group -->
+
+
+                                <div class="input-group menu-item">
+                                    <div class="btn-group dropdown-group">
+                                        <div class="container btn btn-default btn-raised dropdown-button" data-toggle="dropdown">
+                                            <div class="row">
+                                                <div class="col-sm-1">
+                                                    <span class="caret"></span>
+                                                </div>
+                                                <div class="col-sm-10">
+                                                    <span>Operator</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <ul class="dropdown-menu pull-left">
+                                            <li><a href="#">Geocell</a></li>
+                                            <li><a href="#">Magti</a></li>
+                                            <li><a href="#">Beeline</a></li>
+                                        </ul>
+                                    </div>
+                                </div><!-- /input-group -->
+
+                                <div class="input-group menu-item">
+                                    <div class='input-group date' id="from-date">
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon date-chooser-name">From</span>
+                                        </span>
+                                        <input type='text' class="form-control" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+
+
+                                <div class="input-group menu-item">
+                                    <div class='input-group date' id="to-date">
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon date-chooser-name">To</span>
+                                        </span>
+                                        <input type='text' class="form-control" />
+                                        <span class="input-group-addon">
+                                            <span class="glyphicon glyphicon-calendar"></span>
+                                        </span>
+                                    </div>
+                                </div>
+
+                                <div class="input-group menu-item" id="filter-button-div">
+                                    <div class="input-group-btn">
+                                        <a href="javascript:void(0)" class="btn btn-raised btn-info" id="filterBtn">Filter<div class="ripple-container"></div></a>
+                                    </div>
+                                </div>
+
+                                <!-- Toggle button -->
+                                <div class="input-group menu-item">
+                                    <div class="input-group-btn">
+                                        <div class="togglebutton" id="heatmap-toggle-container">
+                                            <label id="heat-map-toggle">
+                                                <input type="checkbox"><span class="toggle"></span> Heat Map
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div> <!-- / Toggle button -->
                             </div>
-                        </div>
+                        </div><!-- /row -->
                     </div>
+                </div> <!-- / Menu itself -->
+            </div>
+        </div> <!-- / Menu container -->
 
-
-                    <div class="input-group menu-item">
-                        <div class="input-group-btn">
-                            <div class='input-group date' id="to-date">
-                                <span class="input-group-addon">
-                                    <span class="glyphicon">To:</span>
-                                </span>
-                                <input type='text' class="form-control" />
-                                <span class="input-group-addon">
-                                    <span class="glyphicon glyphicon-calendar"></span>
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="input-group menu-item">
-                        <div class="radio">
-                            <label><input type="radio" name="optradio" value="0" checked>Cluster</label>
-                            <label><input type="radio" name="optradio" value="1">Heat Map</label>
-                        </div>
-                    </div>
-
-                    <div class="input-group menu-item">
-                        <div class="input-group-btn">
-                            <button type="button" class="btn btn-default" id="filterBtn">Filter</button>
-                        </div>
-                    </div>
-
-                </div>
-            </div><!-- /row -->
-        </div>
 
         <script type="text/javascript">
             $(function () {
@@ -158,6 +263,23 @@
                 });
 
             });
+
+            function slideClick() {
+                // Slide animation
+                icon = $('#toggle-icon');
+                menu_width = $('#menu-container-column').width();
+                if (icon.hasClass('glyphicon-chevron-right')) {
+                    icon.removeClass('glyphicon-chevron-right');
+                    icon.addClass('glyphicon-chevron-left');
+                    new_right = "-=" + (menu_width - 15) + "px";
+                    $('#menu-container').animate({'right': new_right});
+                } else {
+                    icon.removeClass('glyphicon-chevron-left');
+                    icon.addClass('glyphicon-chevron-right');
+                    $('#menu-container').animate({'right': '0'});
+                }
+            }
+
         </script>
     </body>
 </html>
