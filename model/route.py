@@ -2,6 +2,7 @@ import flask
 from flask import Blueprint, render_template
 
 from file_source.data_source import DataSource
+from file_source.data_source import SQLDataSource
 from file_source.data_source import Entry
 
 routing = Blueprint('route', __name__,
@@ -29,7 +30,8 @@ def json_data():
     try:
         def generate():
             result = "{ \"type\":\"FeatureCollection\",\n" +"\"features\":["
-            data_source = DataSource.get_instance()
+            # data_source = DataSource.get_instance()
+            data_source = SQLDataSource()
             # entryies = data_source.get_entries()
             # while sent < to_send:
             Jsons = []

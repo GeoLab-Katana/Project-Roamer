@@ -15,6 +15,6 @@ def serve_icon():
 
 
 if __name__ == '__main__':
-    rd = Reducer('file_source/data.csv')
-    rd.reduce_data()
+    # rd = Reducer('file_source/data.csv')
+    # rd.reduce_data()
     app.run(host='0.0.0.0', port=8080, debug=True)

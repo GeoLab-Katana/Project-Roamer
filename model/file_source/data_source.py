@@ -1,4 +1,5 @@
 import os
+import sqlite3
 
 
 class DataSource:
@@ -11,7 +12,7 @@ class DataSource:
 
     @staticmethod
     def get_instance():
-        if DataSource.DATA_SOURCE == None:
+        if DataSource.DATA_SOURCE is None:
             DataSource.DATA_SOURCE = DataSource()
         return DataSource.DATA_SOURCE
 
@@ -40,6 +41,7 @@ class Entry:
         self.line = line
         self.str_num = None
         self.num = None
+        self.Country = None
         self.Provider = None
         self.ID = None
         self.Region = None
@@ -52,6 +54,7 @@ class Entry:
         self.lat = None
         if x is None and line is not None:
             self.build()
+            self.fix_provider_country()
         else:
             self.lon = x
             self.lat = y
@@ -140,3 +143,43 @@ class Entry:
             "]" +
             "}" +
             "}")
+
+    def fix_provider_country(self):
+        prov_and_country = self.Provider
+        index = prov_and_country.rfind(",")
+        self.Country = prov_and_country[index + 1:].strip(" ")
+        self.Provider = prov_and_country[:index].strip(" ")
+
+
+class SQLDataSource:
+    def __init__(self, db_file=None):
+        if db_file is None:
+            db_file = 'model/database.db'
+        self.db_file = db_file
+
+    def get_entries(self, country=None, date_from=None, date_till=None, operator=None):
+
+        if country is None:
+            country = "%"
+
+        if operator is None:
+            operator = "%"
+
+        query = "SELECT * FROM Entries WHERE country LIKE '{}' AND operator LIKE '{}';".format(country, operator)
+        print(query)
+        with sqlite3.connect(self.db_file) as conn:
+            db_res = conn.execute(query)
+            res = []
+            for row in db_res:
+                new_entry = Entry(None)
+                new_entry.Provider = row[1]
+                new_entry.Country = row[2]
+                new_entry.ID = row[3]
+                new_entry.Region = row[4]
+                new_entry.Ctype = row[5]
+                new_entry.IMEI = row[6]
+                new_entry.Date = row[7]
+                new_entry.lat = row[8]
+                new_entry.lon = row[9]
+                res.append(new_entry)
+            return res
