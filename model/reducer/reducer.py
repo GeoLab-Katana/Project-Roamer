@@ -64,11 +64,12 @@ class Reducer:
                     average = get_average(grid, (x, y))
                     if average > 0:
                         new_grid[(x, y)] = average
-                    if to_str(x, y) not in countries:
-                        countries[to_str(x, y)] = []
-                    _ls = countries[to_str(key[0], key[1])]
-                    country_name = random.choice(_ls)
-                    countries[to_str(x, y)].append(country_name)
+                        for _ in range(0, average):
+                            _ls = countries[to_str(key[0], key[1])]
+                            if to_str(x, y) not in countries:
+                                countries[to_str(x, y)] = []
+                            country_name = random.choice(_ls)
+                            countries[to_str(x, y)].append(country_name)
                         
         return new_grid
 
