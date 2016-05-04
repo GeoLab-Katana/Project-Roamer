@@ -2,6 +2,7 @@ import math
 
 from model.file_source.data_source import DataSource, Entry
 from model.reducer.translator import Translator
+import random
 
 GEO_LU_Y = 43.778536
 GEP_LU_X = 40.173705

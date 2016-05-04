@@ -173,14 +173,8 @@ class SQLDataSource:
         if region is None:
             region = "%"
 
-        query = "SELECT * FROM Entries WHERE country LIKE '{}' AND region LIKE " \
-                "" \
-                "" \
-                "" \
-                "" \
-                "" \
-                "'{}';".format(country, region)
-        print(query)
+        query = "SELECT * FROM Entries WHERE country LIKE '{}' AND region LIKE '{}';".format(country, region)
+
         with sqlite3.connect(self.db_file) as conn:
             db_res = conn.execute(query)
             res = []
