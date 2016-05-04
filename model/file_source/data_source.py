@@ -32,12 +32,12 @@ class DataSource:
     def set_entries(self, ent):
         self.entries = ent
 
-    def get_entries(self, country=None, operator=None):
+    def get_entries(self, country=None, region=None):
         res = []
         for entry in self.entries:
             if country is not None and not entry.Country == country:
                 continue
-            if operator is not None and not entry.Provider == operator:
+            if region is not None and not entry.Region == region:
                 continue
             res.append(entry)
 

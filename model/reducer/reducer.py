@@ -1,8 +1,8 @@
 import math
-
-from model.file_source.data_source import DataSource, Entry
-from model.reducer.translator import Translator
 import random
+
+from file_source.data_source import DataSource, Entry
+from reducer.translator import Translator
 
 GEO_LU_Y = 43.778536
 GEP_LU_X = 40.173705
@@ -38,10 +38,9 @@ class Reducer:
             x, y = translator.translate_to_grid((x, y))
             count = get_from_grid(grid, x, y)
             set_to_grid(grid, x, y, count + 1)
-            if to_str(x, y) not in countries:
-                countries[to_str(x, y)] = []
-            country_name = 'asd' # entridan amoiget aq
-            countries[to_str(x, y)].append(country_name)
+            if (x, y) not in countries:
+                countries[(x, y)] = []
+            countries[(x, y)].append((entry.Region, entry.Country))
         self.reduce_map(grid, size, translator, dt_src, countries)
 
     def reduce_map(self, grid, size, translator, dt_src, countries):
@@ -65,13 +64,11 @@ class Reducer:
                     average = get_average(grid, (x, y))
                     if average > 0:
                         new_grid[(x, y)] = average
+                        if (x, y) not in countries:
+                            countries[(x, y)] = []
+                        _ls = countries[(key[0], key[1])]
                         for _ in range(0, average):
-                            _ls = countries[to_str(key[0], key[1])]
-                            if to_str(x, y) not in countries:
-                                countries[to_str(x, y)] = []
-                            country_name = random.choice(_ls)
-                            countries[to_str(x, y)].append(country_name)
-                        
+                            countries[(x, y)].append(random.choice(_ls))
         return new_grid
 
     def _get_grid_avg(self, grid):
@@ -110,10 +107,12 @@ class Reducer:
             if val > 0:
                 for _ in range(0, val):
                     x, y = translator.random_in_coordinate(key)
-                    country_name = 'default'
-                    if to_str(x, y) in countries:
-                        country_name = random.choice(countries[to_str(x, y)])
-                    _list.append(Entry(country_name, x=x, y=y))
+                    _ls = countries[(key[0], key[1])]
+                    region, country = random.choice(_ls)
+                    entry = Entry(None, x=x, y=y)
+                    entry.Country = country
+                    entry.Region = region
+                    _list.append(entry)
         return _list
 
 
@@ -139,4 +138,3 @@ def get_from_grid(grid, x, y):
     if to_str(x, y) in grid:
         return grid[to_str(x, y)]
     return 0
-    

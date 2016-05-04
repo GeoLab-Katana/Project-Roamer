@@ -31,8 +31,8 @@ def json_data():
     try:
         def generate():
             result = "{ \"type\":\"FeatureCollection\",\n" +"\"features\":["
-            # data_source = DataSource.get_instance()
-            data_source = SQLDataSource()
+            data_source = DataSource.get_instance()
+            # data_source = SQLDataSource()
             # entryies = data_source.get_entries()
             # while sent < to_send:
             Jsons = []
