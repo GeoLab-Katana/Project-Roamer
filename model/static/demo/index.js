@@ -12,7 +12,7 @@ L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
-var isHeatMap = false
+var isHeatMap = false;
 var markers = getMarkers();
 
 console.log(map);
@@ -86,6 +86,9 @@ function updateMarkers(data) {
                 points.push([cord[1], cord[0]]);
             }
         });
+        var radius = 7 + map.getZoom() * 1.3;
+        var blur = 17 + map.getZoom() * 1.3;
+        markers.setOptions({radius: radius, blur: blur});
         markers.setLatLngs(points);
     }
 }
