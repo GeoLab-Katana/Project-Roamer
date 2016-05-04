@@ -6,7 +6,7 @@ var map = L.map('map').setView([41.709829, 44.835205], 8);
 var southWest = L.latLng(43.596306, 39.924316),
     northEast = L.latLng(41.029643, 46.713867),
     bounds = L.latLngBounds(southWest, northEast);
-map.setMaxBounds(bounds);
+map.fitBounds(bounds);
 
 L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
@@ -78,7 +78,7 @@ function getMarkers() {
     }
     return L.heatLayer([], {
         radius: 15,
-        blur: 25,
+        blur: 10,
         minZoom: 0,
         maxZoom: 16
     }).addTo(map);
@@ -97,9 +97,12 @@ function updateMarkers(data) {
                 points.push([cord[1], cord[0]]);
             }
         });
-        var radius = 7 + map.getZoom() * 1.3;
-        var blur = 17 + map.getZoom() * 1.3;
-        markers.setOptions({radius: radius, blur: blur});
+        var zoom = map.getZoom();
+        if (zoom > 0) {
+            var radius = 7 + zoom * 1.2;
+            var blur = zoom * 3;
+            markers.setOptions({radius: radius, blur: blur});
+        }
         markers.setLatLngs(points);
     }
 }
