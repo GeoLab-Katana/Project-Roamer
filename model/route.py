@@ -39,9 +39,11 @@ def json_data():
             args = flask.request.args
             country = utils.get_if_exists(args, 'country')
             region = utils.get_if_exists(args, 'region')
-            print(args)
-            for entry in data_source.get_entries(country=country, 
-                                                 region=region):
+
+            if country is not None or region is not None:
+                data_source = SQLDataSource()
+
+            for entry in data_source.get_entries(country=country, region=region):
                 Jsons.append(Entry.to_json(entry))
             _join = ','.join(Jsons)
             comma = ']}'# if sent + step > to_send else ','

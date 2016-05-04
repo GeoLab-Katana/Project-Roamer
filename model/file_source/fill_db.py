@@ -22,13 +22,12 @@ insert_str = "INSERT INTO Entries " \
              "c_type, imei, action_date, latitude, longitude) " \
              "VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')"
 
-with sqlite3.connect('model/database.db') as conn:
+with sqlite3.connect('database.db') as conn:
     data_source = DataSource.get_instance()
-    with open('model/file_source/data.csv') as f:
-        entries = data_source.read_from_file(f, 200000)
-        for entry in entries:
-            statement = insert_str.format(entry.Provider, entry.Country, entry.ID, entry.Region,
-                                          entry.Ctype, entry.IMEI, entry.Date, entry.lat, entry.lon)
-            conn.execute(statement)
+    entries = data_source.read_from_file(200000)
+    for entry in entries:
+        statement = insert_str.format(entry.Provider, entry.Country, entry.ID, entry.Region,
+                                      entry.Ctype, entry.IMEI, entry.Date, entry.lat, entry.lon)
+        conn.execute(statement)
     conn.commit()
 
