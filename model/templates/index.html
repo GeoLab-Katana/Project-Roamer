@@ -262,6 +262,55 @@
                     update();
                 });
 
+                $(function(){
+
+                    var countryChooser = $("#countryChooser");
+                    countryChooser.find("li a").click(function(){
+                        $("#countryButton").text($(this).text());
+
+                    });
+
+                });
+
+
+                $(function(){
+
+                    var countryChooser = $("#regionChooser");
+                    countryChooser.find("li a").click(function(){
+                        $("#regionButton").text($(this).text());
+
+                    });
+
+                });
+
+
+
+                $("#filterBtn").on('click', function () {
+
+                    var country = $("#countryButton").text();
+                    var region = $("#regionButton").text();
+                    country  = country.replace(/\s+/g,' ').trim();
+                    region  = region.replace(/\s+/g,' ').trim();
+                    var url = '?';
+
+                    if (country != 'Country')
+                    {
+                        url += 'country=' + country;
+
+                    }
+
+                    if (region != 'Region')
+                    {
+                        if (url != '?'){
+                            url += '&'
+                        }
+                        url += 'region=' + region;
+                    }
+                    updateFiltered(url)
+
+                });
+
+
             });
 
             function slideClick() {

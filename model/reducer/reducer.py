@@ -1,7 +1,8 @@
 import math
 
-from file_source.data_source import DataSource, Entry
-from reducer.translator import Translator
+from model.file_source.data_source import DataSource, Entry
+from model.reducer.translator import Translator
+import random
 
 GEO_LU_Y = 43.778536
 GEP_LU_X = 40.173705
@@ -28,6 +29,7 @@ class Reducer:
 
     def reduce_entries(self, start_c, end_c, entries, dt_src):
         grid = {}
+        countries = {}
         size = (GRID_SIZE_X, GRID_SIZE_Y)
         translator = Translator(start_c, end_c, size)
         for entry in entries:
@@ -36,19 +38,23 @@ class Reducer:
             x, y = translator.translate_to_grid((x, y))
             count = get_from_grid(grid, x, y)
             set_to_grid(grid, x, y, count + 1)
-        self.reduce_map(grid, size, translator, dt_src)
+            if to_str(x, y) not in countries:
+                countries[to_str(x, y)] = []
+            country_name = 'asd' # entridan amoiget aq
+            countries[to_str(x, y)].append(country_name)
+        self.reduce_map(grid, size, translator, dt_src, countries)
 
-    def reduce_map(self, grid, size, translator, dt_src):
-        grid = self._avg_for_each(grid, size)
+    def reduce_map(self, grid, size, translator, dt_src, countries):
+        grid = self._avg_for_each(grid, size, countries)
         average = self._get_grid_avg(grid)
         min_val = self._remove_trashold(grid, average)
         grid = self._scale(grid, min_val)
-        coordinate_list = self._generate_list(grid, translator)
+        coordinate_list = self._generate_list(grid, translator, countries)
         dt_src.set_entries(coordinate_list)
         # print(coordinate_list)
         # print(len(coordinate_list))
 
-    def _avg_for_each(self, grid, size):
+    def _avg_for_each(self, grid, size, countries):
         new_grid = {}
         for key, val in grid.items():
             for i in range(-1, 2):
@@ -59,6 +65,13 @@ class Reducer:
                     average = get_average(grid, (x, y))
                     if average > 0:
                         new_grid[(x, y)] = average
+                        for _ in range(0, average):
+                            _ls = countries[to_str(key[0], key[1])]
+                            if to_str(x, y) not in countries:
+                                countries[to_str(x, y)] = []
+                            country_name = random.choice(_ls)
+                            countries[to_str(x, y)].append(country_name)
+                        
         return new_grid
 
     def _get_grid_avg(self, grid):
@@ -91,13 +104,16 @@ class Reducer:
             del grid[key]
         return grid
 
-    def _generate_list(self, grid, translator):
+    def _generate_list(self, grid, translator, countries):
         _list = []
         for key, val in grid.items():
             if val > 0:
                 for _ in range(0, val):
                     x, y = translator.random_in_coordinate(key)
-                    _list.append(Entry(None, x=x, y=y))
+                    country_name = 'default'
+                    if to_str(x, y) in countries:
+                        country_name = random.choice(countries[to_str(x, y)])
+                    _list.append(Entry(country_name, x=x, y=y))
         return _list
 
 
@@ -123,3 +139,4 @@ def get_from_grid(grid, x, y):
     if to_str(x, y) in grid:
         return grid[to_str(x, y)]
     return 0
+    

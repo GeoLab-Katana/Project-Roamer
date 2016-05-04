@@ -10,6 +10,7 @@ var now = Date.now();
 var index;
 
 var updateUrl = '/data/json';
+var updateUrlBase = '/data/json';
 var updateCallback = function (geojson) {
     console.log('loaded ' + geojson.length + ' points JSON in ' + ((Date.now() - now) / 1000) + 's');
 
@@ -29,6 +30,10 @@ getJSON(updateUrl, updateCallback);
 
 self.onmessage = function (e) {
     if (e.data) {
+        if (e.data.url || e.data.url == ''){
+            updateUrlBase = updateUrl+e.data.url;
+            getJSON(updateUrlBase, updateCallback);
+        }
         var zoom = e.data.heatmap ? 16 : e.data.zoom;
         postMessage(index.getClusters(e.data.bbox, zoom));
     }

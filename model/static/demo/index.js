@@ -6,13 +6,13 @@ var map = L.map('map').setView([41.709829, 44.835205], 8);
 var southWest = L.latLng(43.596306, 39.924316),
     northEast = L.latLng(41.029643, 46.713867),
     bounds = L.latLngBounds(southWest, northEast);
-map.setMaxBounds(bounds);
+map.fitBounds(bounds);
 
 L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
 }).addTo(map);
 
-var isHeatMap = false
+var isHeatMap = false;
 var markers = getMarkers();
 
 console.log(map);
@@ -36,6 +36,17 @@ function update() {
         bbox: [bounds.getWest(), bounds.getSouth(), bounds.getEast(), bounds.getNorth()],
         zoom: map.getZoom(),
         heatmap: isHeatMap
+        
+    });
+}
+
+function updateFiltered(url) {
+    worker.postMessage({
+        bbox: [bounds.getWest(), bounds.getSouth(), bounds.getEast(), bounds.getNorth()],
+        zoom: map.getZoom(),
+        heatmap: isHeatMap,
+        url:url
+        
     });
 }
 
@@ -67,7 +78,7 @@ function getMarkers() {
     }
     return L.heatLayer([], {
         radius: 15,
-        blur: 25,
+        blur: 10,
         minZoom: 0,
         maxZoom: 16
     }).addTo(map);
@@ -86,6 +97,12 @@ function updateMarkers(data) {
                 points.push([cord[1], cord[0]]);
             }
         });
+        var zoom = map.getZoom();
+        if (zoom > 0) {
+            var radius = 7 + zoom * 1.2;
+            var blur = zoom * 3;
+            markers.setOptions({radius: radius, blur: blur});
+        }
         markers.setLatLngs(points);
     }
 }
