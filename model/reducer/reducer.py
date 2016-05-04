@@ -1,5 +1,6 @@
 import math
 import random
+import sqlite3
 
 from file_source.data_source import DataSource, Entry
 from reducer.translator import Translator
@@ -16,6 +17,20 @@ GRID_SIZE_X = 10000
 GRID_SIZE_Y = 5000
 
 
+def add_to_regional_db(_list):
+    insert_str = "INSERT INTO RegionalEntries " \
+                 "(operator, country, entry_id, region, " \
+                 "c_type, imei, action_date, latitude, longitude) " \
+                 "VALUES ('{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}', '{}')"
+
+    with sqlite3.connect('database.db') as conn:
+        for entry in _list:
+            statement = insert_str.format(entry.Provider, entry.Country, entry.ID, entry.Region,
+                                          entry.Ctype, entry.IMEI, entry.Date, entry.lat, entry.lon)
+            conn.execute(statement)
+        conn.commit()
+
+
 class Reducer:
     def __init__(self, filename):
         self._filename = filename
@@ -30,6 +45,8 @@ class Reducer:
     def reduce_entries(self, start_c, end_c, entries, dt_src):
         grid = {}
         countries = {}
+        region = {}
+        region_countries = {}
         size = (GRID_SIZE_X, GRID_SIZE_Y)
         translator = Translator(start_c, end_c, size)
         for entry in entries:
@@ -38,22 +55,44 @@ class Reducer:
             x, y = translator.translate_to_grid((x, y))
             count = get_from_grid(grid, x, y)
             set_to_grid(grid, x, y, count + 1)
+            arg = (entry.Region, entry.Country)
             if (x, y) not in countries:
                 countries[(x, y)] = []
-            countries[(x, y)].append((entry.Region, entry.Country))
-        self.reduce_map(grid, size, translator, dt_src, countries)
+            countries[(x, y)].append(arg)
+            if arg[0] not in region:
+                region[arg[0]] = {}
+            if arg[0] not in region_countries:
+                region_countries[arg[0]] = {}
+            reg_c = region_countries[arg[0]]
+            if (x, y) not in reg_c:
+                reg_c[(x, y)] = []
+            reg_c[(x, y)].append(arg)
+            region_countries[arg[0]] = reg_c
 
-    def reduce_map(self, grid, size, translator, dt_src, countries):
-        grid = self._avg_for_each(grid, size, countries)
+            count = get_from_grid(region[arg[0]], x, y)
+            _reg_dict = region[arg[0]]
+            set_to_grid(_reg_dict, x, y, count + 1)
+            region[arg[0]] = _reg_dict
+
+        coordinate_list = self.reduce_map(grid, size, translator, countries)
+        dt_src.set_entries(coordinate_list)
+        # for key, value in region.items():
+        #     print(key)
+            # _list = self.reduce_map(value, size, translator, region_countries[key])
+            # add_to_regional_db(_list)
+            # print(len(_list))
+
+    def reduce_map(self, grid, size, translator, countries):
+        grid = self._avg_for_each(grid, countries)
         average = self._get_grid_avg(grid)
         min_val = self._remove_trashold(grid, average)
         grid = self._scale(grid, min_val)
         coordinate_list = self._generate_list(grid, translator, countries)
-        dt_src.set_entries(coordinate_list)
+        return coordinate_list
         # print(coordinate_list)
         # print(len(coordinate_list))
 
-    def _avg_for_each(self, grid, size, countries):
+    def _avg_for_each(self, grid, countries):
         new_grid = {}
         for key, val in grid.items():
             for i in range(-1, 2):
