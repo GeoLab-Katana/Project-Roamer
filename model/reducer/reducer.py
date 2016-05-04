@@ -1,7 +1,7 @@
 import math
 
-from file_source.data_source import DataSource, Entry
-from reducer.translator import Translator
+from model.file_source.data_source import DataSource, Entry
+from model.reducer.translator import Translator
 
 GEO_LU_Y = 43.778536
 GEP_LU_X = 40.173705

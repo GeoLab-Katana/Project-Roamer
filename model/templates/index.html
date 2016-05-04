@@ -2,7 +2,7 @@
 <html>
     <head>
         <meta charset="utf-8">
-        <title>Project Roamer</title>
+        <title>Supercluster Leaflet demo</title>
 
         <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
@@ -66,13 +66,17 @@
                     <div class="input-group menu-item">
                         <div class="input-group-btn">
                             <button type="button" class="btn btn-default dropdown-toggle menu-button"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="caret"></span> Country
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                            id = "countryButton">
+                                <span class="caret" ></span> Country
                             </button>
-                            <ul class="dropdown-menu pull-left">
+                            <ul class="dropdown-menu pull-left" id="countryChooser">
+                                <li><a href="#">Country</a></li>
+                                <li><a href="#">Turkey</a></li>
+                                <li><a href="#">Russia</a></li>
+                                <li><a href="#">Armenia</a></li>
                                 <li><a href="#">USA</a></li>
-                                <li><a href="#">Spain</a></li>
-                                <li><a href="#">Mexico</a></li>
+                                <li><a href="#">Azerbaijan</a></li>
                             </ul>
                         </div><!-- /btn-group -->
                     </div><!-- /input-group -->
@@ -80,13 +84,17 @@
                     <div class="input-group menu-item">
                         <div class="input-group-btn">
                             <button type="button" class="btn btn-default dropdown-toggle menu-button"
-                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="caret"></span> Operator
+                                    data-toggle="dropdown" aria-haspopup="true" aria-expanded="false"
+                            id = "regionButton">
+                                <span class="caret"></span> Region
                             </button>
-                            <ul class="dropdown-menu pull-left">
-                                <li><a href="#">Geocell</a></li>
-                                <li><a href="#">Magti</a></li>
-                                <li><a href="#">Beeline</a></li>
+                            <ul class="dropdown-menu pull-left" id="regionChooser">
+                                <li><a href="#">Region</a></li>
+                                <li><a href="#">Tbilisi</a></li>
+                                <li><a href="#">Adjara</a></li>
+                                <li><a href="#">Kvemo Kartli</a></li>
+                                <li><a href="#">Mtsketa - Mtianeti</a></li>
+                                <li><a href="#">Samegrelo - Zemo Svaneti</a></li>
                             </ul>
                         </div><!-- /btn-group -->
                     </div><!-- /input-group -->
@@ -156,6 +164,55 @@
                     markers = getMarkers();
                     update();
                 });
+
+                $(function(){
+
+                    var countryChooser = $("#countryChooser");
+                    countryChooser.find("li a").click(function(){
+                        $("#countryButton").text($(this).text());
+
+                    });
+
+                });
+
+
+                $(function(){
+
+                    var countryChooser = $("#regionChooser");
+                    countryChooser.find("li a").click(function(){
+                        $("#regionButton").text($(this).text());
+
+                    });
+
+                });
+
+
+
+                $("#filterBtn").on('click', function () {
+
+                    var country = $("#countryButton").text();
+                    var region = $("#regionButton").text();
+                    country  = country.replace(/\s+/g,' ').trim();
+                    region  = region.replace(/\s+/g,' ').trim();
+                    var url = '?';
+
+                    if (country != 'Country')
+                    {
+                        url += 'country=' + country;
+
+                    }
+
+                    if (region != 'Region')
+                    {
+                        if (url != '?'){
+                            url += '&'
+                        }
+                        url += 'region=' + region;
+                    }
+                    updateFiltered(url)
+
+                });
+
 
             });
         </script>

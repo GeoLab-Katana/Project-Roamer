@@ -36,6 +36,17 @@ function update() {
         bbox: [bounds.getWest(), bounds.getSouth(), bounds.getEast(), bounds.getNorth()],
         zoom: map.getZoom(),
         heatmap: isHeatMap
+        
+    });
+}
+
+function updateFiltered(url) {
+    worker.postMessage({
+        bbox: [bounds.getWest(), bounds.getSouth(), bounds.getEast(), bounds.getNorth()],
+        zoom: map.getZoom(),
+        heatmap: isHeatMap,
+        url:url
+        
     });
 }
 

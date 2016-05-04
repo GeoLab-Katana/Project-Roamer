@@ -7,7 +7,7 @@ class DataSource:
 
     def __init__(self, entries=None):
         self.entries = entries
-        path = os.path.abspath('model/file_source/data.csv')
+        path = os.path.abspath('file_source/data.csv')
         self.file = open(path)
 
     @staticmethod
@@ -162,18 +162,24 @@ class Entry:
 class SQLDataSource:
     def __init__(self, db_file=None):
         if db_file is None:
-            db_file = 'model/database.db'
+            db_file = 'database.db'
         self.db_file = db_file
 
-    def get_entries(self, country=None, date_from=None, date_till=None, operator=None):
+    def get_entries(self, country=None, date_from=None, date_till=None, region=None):
 
         if country is None:
             country = "%"
 
-        if operator is None:
-            operator = "%"
+        if region is None:
+            region = "%"
 
-        query = "SELECT * FROM Entries WHERE country LIKE '{}' AND operator LIKE '{}';".format(country, operator)
+        query = "SELECT * FROM Entries WHERE country LIKE '{}' AND region LIKE " \
+                "" \
+                "" \
+                "" \
+                "" \
+                "" \
+                "'{}';".format(country, region)
         print(query)
         with sqlite3.connect(self.db_file) as conn:
             db_res = conn.execute(query)
