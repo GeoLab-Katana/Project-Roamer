@@ -67,7 +67,7 @@ function getMarkers() {
     }
     return L.heatLayer([], {
         radius: 15,
-        blur: 25,
+        blur: 10,
         minZoom: 0,
         maxZoom: 16
     }).addTo(map);
@@ -86,9 +86,12 @@ function updateMarkers(data) {
                 points.push([cord[1], cord[0]]);
             }
         });
-        var radius = 7 + map.getZoom() * 1.3;
-        var blur = 17 + map.getZoom() * 1.3;
-        markers.setOptions({radius: radius, blur: blur});
+        var zoom = map.getZoom();
+        if (zoom > 0) {
+            var radius = 7 + zoom * 1.2;
+            var blur = zoom * 3;
+            markers.setOptions({radius: radius, blur: blur});
+        }
         markers.setLatLngs(points);
     }
 }
