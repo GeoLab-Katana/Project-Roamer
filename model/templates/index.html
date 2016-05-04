@@ -123,6 +123,10 @@
             .togglebutton label input[type=checkbox]:checked + .toggle {
                 background-color: #FF6D00;
             }
+            .dropdown-menu {
+                width: 100%;
+                text-align: center;
+            }
         </style>
     </head>
     <body>
@@ -159,15 +163,15 @@
                                                 <div class="col-sm-1">
                                                     <span class="caret"></span>
                                                 </div>
-                                                <div class="col-sm-10">
-                                                    <span>Country</span>
+                                                <div class="col-sm-9">
+                                                    <span id="country-name">Country</span>
                                                 </div>
                                             </div>
                                         </div>
-                                        <ul class="dropdown-menu pull-left">
+                                        <ul id="country-list" class="dropdown-menu pull-left">
+                                            <li class="default-country-element" hidden><a id="default-country" href="#">Country</a></li>
+                                            <li class="default-country-element divider" hidden></li>
                                             <li><a href="#">USA</a></li>
-                                            <li><a href="#">Mexico</a></li>
-                                            <li><a href="#">Spain</a></li>
                                         </ul>
                                     </div>
                                 </div><!-- /input-group -->
@@ -175,20 +179,20 @@
 
                                 <div class="input-group menu-item">
                                     <div class="btn-group dropdown-group">
-                                        <div class="container btn btn-default btn-raised dropdown-button" data-toggle="dropdown">
+                                        <div id="region-button" class="btn btn-default btn-raised dropdown-button" data-toggle="dropdown">
                                             <div class="row">
                                                 <div class="col-sm-1">
                                                     <span class="caret"></span>
                                                 </div>
-                                                <div class="col-sm-10">
-                                                    <span>Operator</span>
+                                                <div class="col-sm-9">
+                                                    <span id="region-name">Region</span>
                                                 </div>
                                             </div>
                                         </div>
-                                        <ul class="dropdown-menu pull-left">
-                                            <li><a href="#">Geocell</a></li>
-                                            <li><a href="#">Magti</a></li>
-                                            <li><a href="#">Beeline</a></li>
+                                        <ul id="region-list" class="dropdown-menu pull-left">
+                                            <li class="default-region-element" hidden><a id="default-region" href="#">Region</a></li>
+                                            <li class="default-region-element divider" hidden></li>
+                                            <li><a href="#">Tbilisi</a></li>
                                         </ul>
                                     </div>
                                 </div><!-- /input-group -->
@@ -229,7 +233,7 @@
                                     <div class="input-group-btn">
                                         <div class="togglebutton" id="heatmap-toggle-container">
                                             <label id="heat-map-toggle">
-                                                <input type="checkbox"><span class="toggle"></span> Heat Map
+                                                <input type="checkbox" id="heatmap-checkbox"><span class="toggle"></span> Heat Map
                                             </label>
                                         </div>
                                     </div>
@@ -256,50 +260,52 @@
                 to_date.on("dp.change", function (e) {
                     $('#from-date').data("DateTimePicker").maxDate(e.date);
                 });
-                $("input[name='optradio']").on('change', function () {
-                    isHeatMap = $('input[name="optradio"]:checked').val() == "1";
+                $("#heatmap-checkbox").on('change', function () {
+                    isHeatMap = $('#heatmap-checkbox').prop('checked');
                     markers = getMarkers();
                     update();
                 });
 
-                $(function(){
-
-                    var countryChooser = $("#countryChooser");
-                    countryChooser.find("li a").click(function(){
-                        $("#countryButton").text($(this).text());
-
-                    });
-
+                $("#country-list").find("li a").click(function(){
+                    name = $(this).html().toUpperCase();
+                    def_country = $("#default-country").html().toUpperCase();
+                    if (name == def_country) {
+                        $(".default-country-element").hide();
+                    } else {
+                        $(".default-country-element").show();
+                    }
+                    changeCountry(name);
                 });
 
-
-                $(function(){
-
-                    var countryChooser = $("#regionChooser");
-                    countryChooser.find("li a").click(function(){
-                        $("#regionButton").text($(this).text());
-
-                    });
-
+                $("#region-list").find("li a").click(function(){
+                    name = $(this).text();
+                    def_region = $("#default-region").html().toUpperCase();
+                    if (name == def_region) {
+                        $(".default-region-element").hide();
+                    } else {
+                        $(".default-region-element").show();
+                    }
+                    changeRegion(name);
                 });
-
 
 
                 $("#filterBtn").on('click', function () {
 
-                    var country = $("#countryButton").text();
-                    var region = $("#regionButton").text();
-                    country  = country.replace(/\s+/g,' ').trim();
-                    region  = region.replace(/\s+/g,' ').trim();
+                    var country = $("#country-name").html();
+                    var region = $("#region-name").html();
+                    country  = country.replace(/\s+/g,' ').trim().toUpperCase();
+                    region  = region.replace(/\s+/g,' ').trim().toUpperCase();
                     var url = '?';
 
-                    if (country != 'Country')
+                    def_country = $("#default-country").html().toUpperCase();
+                    if (country != def_country)
                     {
                         url += 'country=' + country;
 
                     }
 
-                    if (region != 'Region')
+                    def_region = $("#default-region").html().toUpperCase();
+                    if (region != def_region)
                     {
                         if (url != '?'){
                             url += '&'
@@ -327,6 +333,14 @@
                     icon.addClass('glyphicon-chevron-right');
                     $('#menu-container').animate({'right': '0'});
                 }
+            }
+
+            function changeCountry(name) {
+                $("#country-name").html(name);
+            }
+
+            function changeRegion(name) {
+                $("#region-name").html(name);
             }
 
         </script>
